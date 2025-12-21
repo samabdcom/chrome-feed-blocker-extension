@@ -36,11 +36,8 @@
   }
 
   function blockWhatsHappening() {
-    if (!isHomeRoute()) {
-      return;
-    }
     const style = createWhatsHappeningStyleElement();
-    // Target the "Trending now" / "What's happening" section
+    // Target the "Trending now" / "What's happening" section - applies everywhere on x.com
     style.textContent = 'section[aria-labelledby="accessible-list-0"] { opacity: 0.01 !important; }';
   }
 
@@ -66,7 +63,7 @@
     } else {
       unblockFeed();
     }
-    // Always block "What's happening" section on home route
+    // Always block "What's happening" section everywhere on x.com
     blockWhatsHappening();
   }
 
@@ -97,10 +94,8 @@
     if (isBlocking && isHomeRoute()) {
       blockFeed();
     }
-    // Always block "What's happening" section on home route
-    if (isHomeRoute()) {
-      blockWhatsHappening();
-    }
+    // Always block "What's happening" section everywhere on x.com
+    blockWhatsHappening();
   });
 
   observer.observe(document.body, {
