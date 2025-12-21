@@ -10,6 +10,7 @@
   let isBlocking = true;
   let styleElement = null;
   let whatsHappeningStyleElement = null;
+  let whoToFollowStyleElement = null;
 
   function isHomeRoute() {
     const pathname = window.location.pathname;
@@ -35,10 +36,25 @@
     return whatsHappeningStyleElement;
   }
 
+  function createWhoToFollowStyleElement() {
+    if (!whoToFollowStyleElement) {
+      whoToFollowStyleElement = document.createElement('style');
+      whoToFollowStyleElement.id = 'who-to-follow-blocker-style';
+      document.head.appendChild(whoToFollowStyleElement);
+    }
+    return whoToFollowStyleElement;
+  }
+
   function blockWhatsHappening() {
     const style = createWhatsHappeningStyleElement();
     // Target the "Trending now" / "What's happening" section - applies everywhere on x.com
     style.textContent = 'section[aria-labelledby="accessible-list-0"] { opacity: 0.01 !important; }';
+  }
+
+  function blockWhoToFollow() {
+    const style = createWhoToFollowStyleElement();
+    // Target the "Who to follow" section - applies everywhere on x.com
+    style.textContent = 'aside[aria-label="Who to follow"] { opacity: 0.01 !important; }';
   }
 
   function blockFeed() {
@@ -65,6 +81,8 @@
     }
     // Always block "What's happening" section everywhere on x.com
     blockWhatsHappening();
+    // Always block "Who to follow" section everywhere on x.com
+    blockWhoToFollow();
   }
 
   // Load initial state
@@ -96,6 +114,8 @@
     }
     // Always block "What's happening" section everywhere on x.com
     blockWhatsHappening();
+    // Always block "Who to follow" section everywhere on x.com
+    blockWhoToFollow();
   });
 
   observer.observe(document.body, {
