@@ -9,6 +9,7 @@
 
   let isBlocking = true;
   let styleElement = null;
+  let whatsHappeningStyleElement = null;
 
   function isHomeRoute() {
     const pathname = window.location.pathname;
@@ -23,6 +24,24 @@
       document.head.appendChild(styleElement);
     }
     return styleElement;
+  }
+
+  function createWhatsHappeningStyleElement() {
+    if (!whatsHappeningStyleElement) {
+      whatsHappeningStyleElement = document.createElement('style');
+      whatsHappeningStyleElement.id = 'whats-happening-blocker-style';
+      document.head.appendChild(whatsHappeningStyleElement);
+    }
+    return whatsHappeningStyleElement;
+  }
+
+  function blockWhatsHappening() {
+    if (!isHomeRoute()) {
+      return;
+    }
+    const style = createWhatsHappeningStyleElement();
+    // Target the "Trending now" / "What's happening" section
+    style.textContent = 'section[aria-labelledby="accessible-list-0"] { opacity: 0.01 !important; }';
   }
 
   function blockFeed() {
@@ -47,6 +66,8 @@
     } else {
       unblockFeed();
     }
+    // Always block "What's happening" section on home route
+    blockWhatsHappening();
   }
 
   // Load initial state
@@ -75,6 +96,10 @@
   const observer = new MutationObserver(() => {
     if (isBlocking && isHomeRoute()) {
       blockFeed();
+    }
+    // Always block "What's happening" section on home route
+    if (isHomeRoute()) {
+      blockWhatsHappening();
     }
   });
 
