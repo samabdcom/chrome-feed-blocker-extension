@@ -18,6 +18,12 @@
     return pathname === '/home' || pathname === '/home/' || pathname.startsWith('/home?');
   }
 
+  function isStatusPage() {
+    const pathname = window.location.pathname;
+    // Match /username/status/123456 pattern
+    return /^\/\w+\/status\/\d+/.test(pathname);
+  }
+
   function createStyleElement() {
     if (!styleElement) {
       styleElement = document.createElement('style');
@@ -47,7 +53,12 @@
 
   function blockWhatsHappening() {
     const style = createWhatsHappeningStyleElement();
-    // Target the "Trending now" / "What's happening" section - applies everywhere on x.com
+    // Don't block on status pages to avoid hiding post content
+    if (isStatusPage()) {
+      style.textContent = '';
+      return;
+    }
+    // Target the "Trending now" / "What's happening" section
     style.textContent = 'section[aria-labelledby="accessible-list-0"] { opacity: 0.01 !important; }';
   }
 
