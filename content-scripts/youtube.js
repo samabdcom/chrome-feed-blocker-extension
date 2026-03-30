@@ -10,13 +10,27 @@
     '#primary-inner #contents'
   ];
 
+  const VIDEO_PAGE_RECOMMENDATION_SELECTORS = [
+    '#secondary #related',
+    '#related',
+    'ytd-watch-next-secondary-results-renderer',
+    '#items.ytd-watch-next-secondary-results-renderer',
+    'ytd-compact-video-renderer',
+    '#secondary-inner #related'
+  ];
+
   let isBlocking = true;
   let styleElement = null;
+  let recsStyleElement = null;
 
   function isFeedRoute() {
     const pathname = window.location.pathname;
     // YouTube feed is only on the homepage (/)
     return pathname === '/' || pathname === '';
+  }
+
+  function isVideoPage() {
+    return window.location.pathname === '/watch';
   }
 
   function createStyleElement() {
@@ -26,6 +40,15 @@
       document.head.appendChild(styleElement);
     }
     return styleElement;
+  }
+
+  function createRecsStyleElement() {
+    if (!recsStyleElement) {
+      recsStyleElement = document.createElement('style');
+      recsStyleElement.id = 'recs-blocker-style';
+      document.head.appendChild(recsStyleElement);
+    }
+    return recsStyleElement;
   }
 
   function blockFeed() {
@@ -39,10 +62,26 @@
     style.textContent = selectors;
   }
 
+  function blockVideoRecommendations() {
+    if (!isVideoPage()) {
+      return;
+    }
+    const style = createRecsStyleElement();
+    const selectors = VIDEO_PAGE_RECOMMENDATION_SELECTORS.map(sel => `${sel} { display: none !important; }`).join('\n');
+    style.textContent = selectors;
+  }
+
   function unblockFeed() {
     if (styleElement) {
       styleElement.remove();
       styleElement = null;
+    }
+  }
+
+  function unblockVideoRecommendations() {
+    if (recsStyleElement) {
+      recsStyleElement.remove();
+      recsStyleElement = null;
     }
   }
 
@@ -51,6 +90,11 @@
       blockFeed();
     } else {
       unblockFeed();
+    }
+    if (isBlocking && isVideoPage()) {
+      blockVideoRecommendations();
+    } else {
+      unblockVideoRecommendations();
     }
   }
 
@@ -80,6 +124,9 @@
   const observer = new MutationObserver(() => {
     if (isBlocking && isFeedRoute()) {
       blockFeed();
+    }
+    if (isBlocking && isVideoPage()) {
+      blockVideoRecommendations();
     }
   });
 
