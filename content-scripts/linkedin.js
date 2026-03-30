@@ -24,6 +24,9 @@
   }
 
   function createStyleElement() {
+    if (styleElement && !document.head.contains(styleElement)) {
+      styleElement = null;
+    }
     if (!styleElement) {
       styleElement = document.createElement('style');
       styleElement.id = 'feed-blocker-style';

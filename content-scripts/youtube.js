@@ -30,6 +30,9 @@
   }
 
   function createStyleElement() {
+    if (styleElement && !document.head.contains(styleElement)) {
+      styleElement = null;
+    }
     if (!styleElement) {
       styleElement = document.createElement('style');
       styleElement.id = 'feed-blocker-style';
@@ -39,6 +42,9 @@
   }
 
   function createRecsStyleElement() {
+    if (recsStyleElement && !document.head.contains(recsStyleElement)) {
+      recsStyleElement = null;
+    }
     if (!recsStyleElement) {
       recsStyleElement = document.createElement('style');
       recsStyleElement.id = 'recs-blocker-style';
