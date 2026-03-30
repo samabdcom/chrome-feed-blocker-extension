@@ -2,17 +2,11 @@
 (function() {
   'use strict';
 
-  const FEED_SELECTORS = [
-    '.scaffold-finite-scroll',
-    '.scaffold-finite-scroll__content',
-    '.feed-container',
-    '[data-test-id="feed-container"]',
-    'div[data-view-name="feed-container"]',
-    'div[data-finite-scroll-hotkey-context="FEED"]',
-    'div.feed-shared-update-v2',
-    'div[data-id^="urn:li:activity"]',
-    'div.occludable-update'
-  ];
+  // LinkedIn uses obfuscated class names, so we target structurally:
+  // main > div > div has 3 children: left sidebar, feed (middle), right sidebar
+  const FEED_CSS = `
+    main > div > div > :nth-child(2) { display: none !important; }
+  `;
 
   let isBlocking = true;
   let styleElement = null;
@@ -40,7 +34,7 @@
       return;
     }
     const style = createStyleElement();
-    style.textContent = FEED_SELECTORS.map(sel => `${sel} { display: none !important; }`).join('\n');
+    style.textContent = FEED_CSS;
   }
 
   function unblockFeed() {
