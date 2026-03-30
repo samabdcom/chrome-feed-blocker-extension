@@ -5,6 +5,7 @@ A Chrome extension that blocks (hides) main feeds on Twitter/X, LinkedIn, and Yo
 ## Features
 
 - Block main feeds on Twitter/X, LinkedIn, and YouTube
+- Hide video recommendations sidebar on YouTube watch pages
 - Individual toggle controls for each site
 - Persistent settings using Chrome storage
 - Real-time blocking/unblocking without page reload

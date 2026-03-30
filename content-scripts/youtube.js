@@ -11,12 +11,8 @@
   ];
 
   const VIDEO_PAGE_RECOMMENDATION_SELECTORS = [
-    '#secondary #related',
     '#related',
-    'ytd-watch-next-secondary-results-renderer',
-    '#items.ytd-watch-next-secondary-results-renderer',
-    'ytd-compact-video-renderer',
-    '#secondary-inner #related'
+    'ytd-watch-next-secondary-results-renderer'
   ];
 
   let isBlocking = true;
@@ -120,13 +116,17 @@
     }
   });
 
-  // Handle dynamic content loading
+  // Handle dynamic content loading and route changes
+  let lastPathname = window.location.pathname;
+
   const observer = new MutationObserver(() => {
-    if (isBlocking && isFeedRoute()) {
-      blockFeed();
-    }
-    if (isBlocking && isVideoPage()) {
-      blockVideoRecommendations();
+    const currentPathname = window.location.pathname;
+    if (currentPathname !== lastPathname) {
+      lastPathname = currentPathname;
+      updateBlocking();
+    } else if (isBlocking) {
+      if (isFeedRoute()) blockFeed();
+      if (isVideoPage()) blockVideoRecommendations();
     }
   });
 
@@ -135,29 +135,12 @@
     subtree: true
   });
 
-  // Listen for route changes (YouTube uses client-side routing)
-  let lastPathname = window.location.pathname;
-  
   // Listen to popstate for browser back/forward
   window.addEventListener('popstate', () => {
     if (window.location.pathname !== lastPathname) {
       lastPathname = window.location.pathname;
       updateBlocking();
     }
-  });
-
-  // Monitor pathname changes via MutationObserver (for pushState navigation)
-  const routeObserver = new MutationObserver(() => {
-    const currentPathname = window.location.pathname;
-    if (currentPathname !== lastPathname) {
-      lastPathname = currentPathname;
-      updateBlocking();
-    }
-  });
-
-  routeObserver.observe(document.body, {
-    childList: true,
-    subtree: true
   });
 
   // Override pushState/replaceState to catch programmatic navigation
